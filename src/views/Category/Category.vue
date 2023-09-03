@@ -9,16 +9,16 @@
       </div>
     </div>
     <div class="row">
-      <div
-        v-for="category of categories" :key="category.id" class="col-xl-4 col-md-6 col-12 pt-3 d-flex">
-        <CategoryBox :category="category"> </CategoryBox>
+      <div v-for="category of categories" :key="category.id" class="col-xl-4 col-md-6 col-12 pt-3 d-flex">
+        <CategoryBox v-on:clickParent="clickParent" :category="category"> </CategoryBox>
       </div>
     </div>
   </div>
 </template>
 <script>
-const axios = require("axios");
-import CategoryBox from "../../components/Category/CategoryBox.vue";
+import CategoryBox from "@/components/Category/CategoryBox.vue";
+import category from '@/apis/category'
+
 export default {
   name: "CategoryC",
   components: {
@@ -26,17 +26,21 @@ export default {
   },
   data() {
     return {
-      baseURL: "https://limitless-lake-55070.herokuapp.com",
       categories: [],
     };
   },
   methods: {
     async getCategories() {
-      await axios
-        .get(`${this.baseURL}/category/`)
-        .then((res) => (this.categories = res.data))
-        .catch((err) => console.log(err));
+      try {
+        const { data } = await category.fetchCategoryList()
+        this.categories = data
+      } catch (error) {
+        console.log(error);
+      }
     },
+    clickParent(data) {
+      alert(data)
+    }
   },
   mounted() {
     this.getCategories();
